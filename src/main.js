@@ -209,6 +209,7 @@ $('#drop-zone').ondrop = e => { e.preventDefault(); $('#drop-zone').classList.re
 function setBusy(value) {
   busy=value; $('#generate').disabled = value || !draft; $('#generate').classList.toggle('loading',value);
   for(const el of document.querySelectorAll('.create-panel input,.create-panel textarea,.create-panel .finish-option,.mode-tabs button,#drop-zone')) el.disabled=value;
+  if (__STATIC_DEMO__) $('#ai-mode').disabled = true;
   $('#cancel-generation').hidden = !value || mode!=='ai';
 }
 $('#generate').onclick = async () => {
