@@ -4,6 +4,18 @@ Interactive die-cut sticker playground inspired by [Bubbbly's sticker pack](http
 
 ## Run
 
+### Live demo / 在线体验
+
+[Open Sticker Lab · 点击体验](https://jdb156158.github.io/3dStickerTool/)
+
+[![Sticker Lab interactive holographic sticker preview](docs/preview.png)](https://jdb156158.github.io/3dStickerTool/)
+
+GitHub Pages supports 3D interactions, local IMG.LY subject cutout, and PNG export. AI remix requires the Node server and is disabled in this static demo. First-time cutout downloads model assets; photos stay in your browser. Created stickers are session-only—download them before refreshing.
+
+在线版支持 3D 交互、本地 AI 抠图和 PNG 导出；不提供需要后端的 AI 重绘。首次抠图需下载模型，图片不会上传；刷新前请下载保存作品。
+
+### Local development
+
 Requires Node.js 22+ and pnpm (or npm).
 
 ```sh

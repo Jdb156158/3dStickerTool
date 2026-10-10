@@ -2,6 +2,7 @@ import './style.css';
 import { StickerStage, stickerLayers } from './stage.js';
 import { composeSticker, finishes, loadImage } from './stickers.js';
 import { removeSubjectBackground } from './background.js';
+const assetBase = import.meta.env.BASE_URL;
 
 const icons = {
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -34,7 +35,7 @@ let stage;
 
 $('#app').innerHTML = `
   <header class="header">
-    <a class="brand" href="/" aria-label="Sticker Lab 首页"><img class="brand-sticker" src="/stickers/stickerlab.png" alt="StickerLab" width="2016" height="768" draggable="false" /><span class="brand-trademark" aria-hidden="true">®</span></a>
+    <a class="brand" href="${assetBase}" aria-label="Sticker Lab 首页"><img class="brand-sticker" src="${assetBase}stickers/stickerlab.png" alt="StickerLab" width="2016" height="768" draggable="false" /><span class="brand-trademark" aria-hidden="true">®</span></a>
     <span class="header-caption">Small things. Big personality.</span>
     <div class="header-actions"><button class="button primary" id="open-create">${icon('plus')}<span>Create a sticker</span></button><button class="icon-button" id="open-settings" aria-label="API 设置" title="API 设置">${icon('settings')}<span class="key-dot ${settings.key ? 'connected' : ''}"></span></button></div>
   </header>
@@ -99,7 +100,7 @@ function renderRail() {
   $('#sticker-rail').replaceChildren(...pack.map((sticker, i) => {
     const button = document.createElement('button'); button.className = `thumb ${current === i ? 'active' : ''}`;
     button.setAttribute('aria-label', sticker.name); button.setAttribute('aria-current', current === i ? 'true' : 'false'); button.title = sticker.name;
-    const img = document.createElement('img'); img.src = sticker.result?.url || sticker.source; img.alt = ''; img.draggable = false;
+    const img = document.createElement('img'); img.src = sticker.result?.url || (sticker.source.startsWith('/stickers/') ? assetBase + sticker.source.slice(1) : sticker.source); img.alt = ''; img.draggable = false;
     button.append(img); button.onclick = () => showSticker(i); return button;
   }));
 }
@@ -111,7 +112,7 @@ async function showSticker(index) {
   $('#download').disabled = true;
   renderRail();
   try {
-    sticker.result ||= await composeSticker(sticker.source, { border: sticker.border, finish: sticker.finish, removeBg: sticker.removeBg, foilInk: sticker.foilInk });
+    sticker.result ||= await composeSticker(sticker.source.startsWith('/stickers/') ? assetBase + sticker.source.slice(1) : sticker.source, { border: sticker.border, finish: sticker.finish, removeBg: sticker.removeBg, foilInk: sticker.foilInk });
     if(id !== renderId) return;
     if (stage) stage.setSticker(sticker.result, sticker.finish);
     else { $('#fallback').src = sticker.result.url; $('#fallback').hidden = false; }
@@ -177,6 +178,12 @@ function setMode(next) {
   $('#create-status').textContent='';
 }
 $('#local-mode').onclick = () => setMode('local'); $('#ai-mode').onclick = () => setMode('ai');
+if (__STATIC_DEMO__) {
+  $('#ai-mode').disabled = true;
+  $('#ai-mode').title = 'GitHub Pages 演示版不提供 AI 重绘服务器';
+  $('#open-settings').hidden = true;
+  $('#privacy-note').innerHTML = 'GitHub Pages · 仅本地制作，无需 Key。<a href="https://github.com/Jdb156158/3dStickerTool">Source / 源码</a> · <a href="' + assetBase + 'licenses/IMG-LY-AGPL-3.0.txt">IMG.LY license</a>';
+}
 $('#drop-zone').onclick = () => { if(!busy) $('#file-input').click(); };
 let uploadVersion = 0;
 async function acceptFile(file) {
